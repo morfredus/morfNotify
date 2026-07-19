@@ -3,8 +3,10 @@
 # update-service.sh — Met a jour morfSensor installe en service.
 #
 # Recupere le code (git pull), recompile, recopie le binaire dans le dossier fixe,
-# puis redemarre le service. La config locale (morfnotify.json) n'est jamais
-# ecrasee. Complement de install-service.sh.
+# rafraichit l'unite systemd, complete la configuration, puis redemarre le
+# service. Les valeurs deja presentes dans morfnotify.json ne sont JAMAIS
+# modifiees ; seuls les parametres apparus depuis l'installation y sont
+# ajoutes, puis listes. Complement de install-service.sh.
 #
 # Usage :
 #   sudo ./scripts/linux/update-service.sh           # git pull + build + restart
@@ -12,6 +14,11 @@
 #   sudo ./scripts/linux/update-service.sh --refresh-config # sauvegarde + remplace morfnotify.json
 
 set -euo pipefail
+
+NO_CONFIG=0
+for arg in "$@"; do
+    [[ "$arg" == "--no-config" ]] && NO_CONFIG=1
+done
 
 SERVICE_NAME="morfnotify"
 UNIT_DEST="/etc/systemd/system/$SERVICE_NAME.service"
@@ -83,6 +90,57 @@ else
     echo "Config existante conservee : $APP_DIR/morfnotify.json"
 fi
 chown "$RUN_USER:$RUN_USER" "$APP_DIR/morfnotify.json"
+
+# --- Rafraichir l'unite systemd ------------------------------------------
+# Une modification du fichier .service dans le depot ne parvenait jamais a
+# /etc/systemd/system : le service continuait de tourner avec l'ancienne
+# definition, sans que rien ne le signale.
+if [[ -f "$SCRIPT_DIR/morfnotify.service" ]]; then
+    NEW_UNIT="$(mktemp)"
+    sed -e "s/__RUN_USER__/$RUN_USER/g" -e "s#__APP_DIR__#${APP_DIR:-}#g" \
+        "$SCRIPT_DIR/morfnotify.service" > "$NEW_UNIT"
+    if ! cmp -s "$NEW_UNIT" "$UNIT_DEST"; then
+        echo "Unite systemd modifiee : mise a jour."
+        install -m 0644 "$NEW_UNIT" "$UNIT_DEST"
+        systemctl daemon-reload
+    fi
+    rm -f "$NEW_UNIT"
+fi
+
+# --- Completer la configuration ------------------------------------------
+# Les valeurs deja en place ne sont JAMAIS modifiees, mais les parametres
+# APPARUS depuis l'installation sont ajoutes. Sans cela, une version
+# introduisant un parametre le laissait absent indefiniment et la fonction
+# correspondante ne s'activait jamais, en silence.
+CONFIG_FILE="$APP_DIR/morfnotify.json"
+EXAMPLE_FILE="$REPO_ROOT/config/morfnotify.example.json"
+if [[ $NO_CONFIG -eq 0 && -f "$EXAMPLE_FILE" ]]; then
+    if [[ ! -f "$CONFIG_FILE" ]]; then
+        # Config absente (installation partielle, dossier efface) : on la cree
+        # plutot que de laisser le service demarrer sans.
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        install -m 0644 "$EXAMPLE_FILE" "$CONFIG_FILE"
+        echo "Config absente : copiee depuis l'exemple -> $CONFIG_FILE (a adapter)."
+    elif command -v python3 >/dev/null 2>&1; then
+        # Sauvegarde avant toute modification : la config porte des reglages que
+        # l'utilisateur ne pourrait pas retrouver.
+        BACKUP="$CONFIG_FILE.bak-$(date +%Y%m%d-%H%M%S)"
+        cp "$CONFIG_FILE" "$BACKUP"
+        ADDED="$(python3 "$SCRIPT_DIR/merge-config.py" "$EXAMPLE_FILE" "$CONFIG_FILE" || true)"
+        if [[ -n "$ADDED" ]]; then
+            echo
+            echo "Nouveaux parametres ajoutes a $CONFIG_FILE :"
+            echo "$ADDED" | sed 's/^/    /'
+            echo "  (valeurs existantes inchangees ; sauvegarde : $BACKUP)"
+            echo "  A RENSEIGNER si besoin avant que la fonction correspondante s'active."
+            echo
+        else
+            rm -f "$BACKUP"
+        fi
+    else
+        echo "python3 absent : configuration non completee (voir $EXAMPLE_FILE)." >&2
+    fi
+fi
 
 # --- Redemarrer si le service tournait ----------------------------------
 if [[ "$SERVICE_WAS_ACTIVE" -eq 1 ]]; then
