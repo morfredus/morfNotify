@@ -21,7 +21,7 @@ namespace morfnotify {
 // signale (pour journalisation), jamais renvoye en bloquant.
 //
 // Ajouter une destination = ecrire une sous-classe ici + l'enregistrer dans
-// NotifierFactory. L'API HTTP et les projets producteurs ne changent pas :
+// ModuleFactory. L'API HTTP et les projets producteurs ne changent pas :
 // c'est tout l'interet du point de diffusion unique.
 // -----------------------------------------------------------------------------
 class INotifier : public QObject {

@@ -7,7 +7,7 @@ Until then, here are the existing guides (in French, under [`docs/fr/`](../fr/))
 
 | Document | What it covers |
 |---|---|
-| [Architecture](../fr/ARCHITECTURE.md) | The classes (`Notification`, `INotifier`, `NotifierRegistry`, `NotifyHttpServer`, `NotifyService`) and threading. |
+| [Architecture](../fr/ARCHITECTURE.md) | The classes (`Notification`, `INotifier`, `ModuleRegistry`, `HttpServer`, `Service`) and threading. |
 | [HTTP protocol](../fr/PROTOCOL.md) | The routes (`POST /notify`, `/targets`, `/status`, `/healthz`) and the JSON schema. |
 | [Integration](../fr/INTEGRATION.md) | Wiring a producer; adding a destination. |
 

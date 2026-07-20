@@ -10,7 +10,7 @@ l'écosystème morfSystem. API HTTP `POST /notify`, destinations enfichables.
 
 | Document | Contenu |
 |---|---|
-| [Architecture](ARCHITECTURE.md) | Les classes (`Notification`, `INotifier`, `NotifierRegistry`, `NotifyHttpServer`, `NotifyService`) et le fil d'exécution. |
+| [Architecture](ARCHITECTURE.md) | Les classes (`Notification`, `INotifier`, `ModuleRegistry`, `HttpServer`, `Service`) et le fil d'exécution. |
 | [Protocole HTTP](PROTOCOL.md) | Les routes (`POST /notify`, `/targets`, `/status`, `/healthz`) et le schéma JSON. |
 | [Intégration](INTEGRATION.md) | **Ajouter une destination** ; brancher un producteur. |
 

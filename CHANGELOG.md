@@ -3,6 +3,45 @@
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 et du [versionnage sémantique](https://semver.org/lang/fr/).
 
+## [Non publié]
+
+### Modifié
+
+- **Briques d'infrastructure alignées sur les noms du gabarit.** morfNotify
+  précède `morfTemplateService` : il a donné naissance au gabarit, avec
+  morfSensor, et en avait gardé ses propres noms. Cette divergence empêchait
+  toute comparaison mécanique avec l'amont et compliquait la maintenance du
+  squelette.
+
+  | Avant | Après |
+  | --- | --- |
+  | `NotifyHttpServer` | `HttpServer` |
+  | `NotifyService` | `Service` |
+  | `NotifyConfig` | `ServiceConfig` |
+  | `NotifierRegistry` | `ModuleRegistry` |
+  | `NotifierFactory` | `ModuleFactory` |
+  | `TargetDef` | `ModuleDef` |
+
+  Les fichiers correspondants sont renommés à l'identique.
+
+- **Le métier n'est pas touché.** `INotifier`, `Notification`, `EmailNotifier`,
+  `TelegramNotifier`, `WebhookNotifier` et `LogNotifier` gardent leurs noms :
+  ce sont les points d'extension propres à morfNotify. `ModuleRegistry`
+  conserve ses méthodes métier (`dispatch`, `targetNames`, `targetsJson`) et
+  son cycle de vie propre — elle n'a ni `startAll()` ni `stopAll()`, une
+  livraison n'étant pas un module que l'on démarre. C'est précisément le genre
+  de divergence que l'architecture autorise.
+
+- **Aucun changement fonctionnel ni de contrat.** Le format du fichier de
+  configuration est inchangé (clés `targets`, `http_port`, `beacon`…), l'API
+  HTTP est inchangée, et le binaire se comporte à l'identique. Le renommage
+  porte sur des identifiants C++ et les noms de fichiers, rien d'autre.
+
+  Cette harmonisation ne remet pas en cause le principe de l'écosystème :
+  `morfTemplateService` reste un **gabarit de création**, pas un framework
+  d'exécution. Chaque service demeure propriétaire de son implémentation et
+  libre de la faire évoluer. Seuls les noms convergent, pas le code.
+
 ## [0.1.1] – 2026-07-19
 
 ### Modifié
@@ -42,7 +81,7 @@ et du [versionnage sémantique](https://semver.org/lang/fr/).
   `400` si invalide), `GET /targets`, `GET /status` (compatible morfBeacon),
   `GET /healthz`.
 - **Point d'extension `INotifier`** (QObject asynchrone) + fabrique
-  `NotifierFactory` : ajouter une destination = une classe + une ligne.
+  `ModuleFactory` : ajouter une destination = une classe + une ligne.
 - **Destinations fournies** : `log` (journald + fichier), `webhook` (POST HTTP,
   format `json` ou `ntfy` pour push type Pixel).
 - **Livraison fire-and-forget** : le producteur n'attend jamais une destination

@@ -17,11 +17,11 @@
 #include <QJsonParseError>
 #include <QTextStream>
 
-#include <morfnotify/NotifyService.h>
-#include <morfnotify/NotifierFactory.h>
+#include <morfnotify/Service.h>
+#include <morfnotify/ModuleFactory.h>
 #include <morfnotify/Version.h>
 
-using morfnotify::NotifyConfig;
+using morfnotify::ServiceConfig;
 
 namespace {
 
@@ -45,16 +45,16 @@ QString findDefaultConfig() {
 }
 
 // Config de repli : une destination 'log' (journal), prete a tester l'API.
-NotifyConfig fallbackConfig() {
-    NotifyConfig c;
-    morfnotify::TargetDef log;
+ServiceConfig fallbackConfig() {
+    ServiceConfig c;
+    morfnotify::ModuleDef log;
     log.name = QStringLiteral("journal");
     log.type = QStringLiteral("log");
     c.targets.push_back(log);
     return c;
 }
 
-bool loadConfig(const QString& path, NotifyConfig* outCfg, QString* error) {
+bool loadConfig(const QString& path, ServiceConfig* outCfg, QString* error) {
     QFile f(path);
     if (!f.open(QIODevice::ReadOnly)) {
         *error = QStringLiteral("impossible d'ouvrir %1 : %2").arg(path, f.errorString());
@@ -66,7 +66,7 @@ bool loadConfig(const QString& path, NotifyConfig* outCfg, QString* error) {
         *error = QStringLiteral("JSON invalide dans %1 : %2").arg(path, pe.errorString());
         return false;
     }
-    *outCfg = NotifyConfig::fromJson(doc.object());
+    *outCfg = ServiceConfig::fromJson(doc.object());
     return true;
 }
 
@@ -93,11 +93,11 @@ int main(int argc, char** argv) {
 
     if (parser.isSet(listOpt)) {
         out() << "Types de destinations disponibles : "
-              << morfnotify::NotifierFactory::knownTypes().join(", ") << '\n';
+              << morfnotify::ModuleFactory::knownTypes().join(", ") << '\n';
         return 0;
     }
 
-    NotifyConfig config;
+    ServiceConfig config;
     QString configPath = parser.value(configOpt);
     if (configPath.isEmpty())
         configPath = findDefaultConfig();
@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
         out() << "Configuration chargee : " << configPath << '\n';
     }
 
-    morfnotify::NotifyService service(config);
+    morfnotify::Service service(config);
     for (const QString& w : service.warnings())
         err() << "Avertissement : " << w << '\n';
 

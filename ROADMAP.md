@@ -7,7 +7,7 @@ destinations.
 
 ## Nouvelles destinations
 
-Le point d'extension `INotifier` + `NotifierFactory` est prêt pour :
+Le point d'extension `INotifier` + `ModuleFactory` est prêt pour :
 
 - **E-mail** — envoi SMTP (`type: "smtp"`).
 - **MQTT** — publication sur un broker domotique (`type: "mqtt"`).
@@ -16,7 +16,7 @@ Le point d'extension `INotifier` + `NotifierFactory` est prêt pour :
 - **Slack / Discord / Telegram** — webhooks entrants (déjà possibles via `webhook`
   ; un format dédié pourrait simplifier).
 
-Chaque ajout : une classe `INotifier`, une branche dans `NotifierFactory::create`,
+Chaque ajout : une classe `INotifier`, une branche dans `ModuleFactory::create`,
 une ligne dans `knownTypes()`. L'API et les producteurs ne changent pas.
 
 ## Service

@@ -81,7 +81,7 @@ void DemoNotifier::send(const Notification& n) {
 } // namespace morfnotify
 ```
 
-### 3. L'enregistrer (`src/NotifierFactory.cpp`)
+### 3. L'enregistrer (`src/ModuleFactory.cpp`)
 
 ```cpp
 #include "morfnotify/DemoNotifier.h"

@@ -17,7 +17,7 @@ namespace morfnotify {
 // Generique : couvre un dashboard web, une passerelle push, ntfy.sh, etc. La
 // livraison est asynchrone (QNetworkAccessManager) et non bloquante.
 //
-// Parametres (TargetDef::params) :
+// Parametres (ModuleDef::params) :
 //   "url"    : URL cible (REQUIS).
 //   "format" : "json" (defaut) -> POST le JSON complet de la notification ;
 //              "ntfy" -> corps = message, en-tetes Title/Priority/Tags (ntfy.sh,

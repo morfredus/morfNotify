@@ -23,7 +23,7 @@ Voir [`docs/fr/INTEGRATION.md`](docs/fr/INTEGRATION.md). En résumé :
 
 1. Créer `include/morfnotify/MaCible.h` + `src/MaCible.cpp`, héritant de
    `INotifier` (implémenter `send()`, émettre `delivered`/`failed`).
-2. Ajouter une branche dans `NotifierFactory::create` et son nom dans
+2. Ajouter une branche dans `ModuleFactory::create` et son nom dans
    `knownTypes()`.
 3. L'ajouter aux sources dans `CMakeLists.txt`.
 

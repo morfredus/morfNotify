@@ -16,7 +16,7 @@ namespace morfnotify {
 // fichier est configure, y ajoute une ligne horodatee. Sans dependance ni
 // reseau : destination par defaut ideale, et exemple minimal du pattern.
 //
-// Parametres (TargetDef::params) :
+// Parametres (ModuleDef::params) :
 //   "file" : chemin d'un fichier de log (optionnel ; journal seul si absent).
 // -----------------------------------------------------------------------------
 class LogNotifier : public INotifier {

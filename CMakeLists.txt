@@ -33,21 +33,21 @@ endif()
 
 # --- Bibliotheque ---------------------------------------------------------
 add_library(morfNotify STATIC
-    src/NotifierRegistry.cpp
-    src/NotifyHttpServer.cpp
-    src/NotifyService.cpp
-    src/NotifierFactory.cpp
+    src/ModuleRegistry.cpp
+    src/HttpServer.cpp
+    src/Service.cpp
+    src/ModuleFactory.cpp
     src/LogNotifier.cpp
     src/WebhookNotifier.cpp
     src/EmailNotifier.cpp
     src/TelegramNotifier.cpp
     include/morfnotify/Notification.h
     include/morfnotify/INotifier.h
-    include/morfnotify/NotifierRegistry.h
-    include/morfnotify/NotifyConfig.h
-    include/morfnotify/NotifierFactory.h
-    include/morfnotify/NotifyHttpServer.h
-    include/morfnotify/NotifyService.h
+    include/morfnotify/ModuleRegistry.h
+    include/morfnotify/ServiceConfig.h
+    include/morfnotify/ModuleFactory.h
+    include/morfnotify/HttpServer.h
+    include/morfnotify/Service.h
     include/morfnotify/LogNotifier.h
     include/morfnotify/WebhookNotifier.h
     include/morfnotify/EmailNotifier.h

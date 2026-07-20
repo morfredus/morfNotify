@@ -11,15 +11,15 @@ d'un canal de sortie est isolée derrière l'interface `INotifier`.
 ## Les pièces
 
 ```
-NotifyService (façade : câble tout à partir d'une NotifyConfig)
-├── NotifierRegistry   -> collectionne les INotifier, DISTRIBUE, compte
+Service (façade : câble tout à partir d'une ServiceConfig)
+├── ModuleRegistry   -> collectionne les INotifier, DISTRIBUE, compte
 │     └── INotifier (interface, QObject)   ◀── POINT D'EXTENSION
 │            ├── LogNotifier      (journald + fichier)
 │            └── WebhookNotifier  (POST HTTP ; format json ou ntfy)
-├── NotifyHttpServer   -> API HTTP (POST /notify, /targets, /status, /healthz)
+├── HttpServer   -> API HTTP (POST /notify, /targets, /status, /healthz)
 └── morfbeacon::Heartbeat -> annonce UDP "morfNotify" (découverte LAN)
         ▲ IMetricsProvider
-        └── NotifierRegistry expose ses compteurs (reçu / distribué / échecs)
+        └── ModuleRegistry expose ses compteurs (reçu / distribué / échecs)
 ```
 
 ### `Notification` (struct)
@@ -36,29 +36,29 @@ Le **seul** point d'extension. Chaque destination en hérite et implémente
 `failed`. `name()` est ce que les producteurs mettent dans `targets` ; `type()`
 est l'identifiant de fabrique.
 
-### `NotifierFactory`
+### `ModuleFactory`
 
-Fabrique un `INotifier` à partir d'un `TargetDef` (config). Point d'extension
+Fabrique un `INotifier` à partir d'un `ModuleDef` (config). Point d'extension
 **compile-time** : une branche par type reconnu ; `knownTypes()` les liste.
 
-### `NotifierRegistry` (QObject + `morfbeacon::IMetricsProvider`)
+### `ModuleRegistry` (QObject + `morfbeacon::IMetricsProvider`)
 
 Détient les destinations, indexées par nom (uniques). `dispatch(notification)`
 remet le message vers chaque cible demandée qui existe, et **rapporte les noms
 inconnus** sans échouer. Tient des compteurs (reçu / distribué / échecs) exposés
 via `/status`.
 
-### `NotifyHttpServer` (QObject)
+### `HttpServer` (QObject)
 
 Serveur HTTP/1.1 minimal sur `QTcpServer. Contrairement à un serveur en lecture
 seule, il lit un **corps de requête** (POST) : il attend `Content-Length` octets
 avant de traiter. Route vers `POST /notify` (valide + distribue → `202` /`400`),
 `GET /targets`, `GET /status`, `GET /healthz`.
 
-### `NotifyService` (façade)
+### `Service` (façade)
 
-L'unique objet manipulé par le démon. À partir d'une `NotifyConfig`, il construit
-les destinations (via `NotifierFactory`), les enregistre, démarre le serveur HTTP
+L'unique objet manipulé par le démon. À partir d'une `ServiceConfig`, il construit
+les destinations (via `ModuleFactory`), les enregistre, démarre le serveur HTTP
 puis le heartbeat morfBeacon.
 
 ## Fil d'exécution
