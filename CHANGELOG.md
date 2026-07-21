@@ -5,6 +5,8 @@ et du [versionnage sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.2.0] – 2026-07-21
+
 ### Modifié
 
 - **Briques d'infrastructure alignées sur les noms du gabarit.** morfNotify
