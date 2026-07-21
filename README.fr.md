@@ -91,9 +91,20 @@ Voir [`config/morfnotify.example.json`](config/morfnotify.example.json).
 ## Installer en service
 
 ```sh
-sudo ./scripts/linux/install-service.sh      # compile, copie dans /opt/morfnotify, active systemd
-journalctl -u morfnotify -f
+# Toutes plateformes : Linux, Windows, Raspberry Pi
+sudo ./service.py install      # compile si besoin, installe, demarre
+sudo ./service.py update       # recompile, remplace le binaire, redemarre
+sudo ./service.py uninstall    # desinscrit, en conservant votre configuration
+./service.py status            # ce que le systeme en dit
 ```
+
+Un seul point d'entree partout. Ce qu'est ce service — son nom, son dossier,
+ses configurations — est declare dans `service.json` a cote. Les quatre etapes
+d'installation vivent une seule fois pour tout le parc ; seul le gestionnaire
+de services change selon la plateforme.
+
+Les anciens scripts `scripts/linux/` et `scripts/windows/` fonctionnent
+toujours, inchanges.
 
 ## Documentation
 
