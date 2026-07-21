@@ -1,0 +1,20 @@
+{
+  "_comment": "Deployment facts for this project, read by morfdeploy. The four install steps live in one place for the whole parc; this file states only what is specific to this service.",
+  "service_name": "morfnotify",
+  "display_name": "morfNotify",
+  "description": "Notification dispatch service",
+  "binary": "morfnotify",
+  "_comment_app_dir": "Overridden by MORF_APP_DIR, one variable for every service. The old per-project spellings (MT_/MN_/MS_) are still honoured with a notice.",
+  "app_dir": {
+    "linux": "/opt/morfnotify",
+    "windows": "%ProgramData%/morfnotify"
+  },
+  "_comment_configs": "Copied at install. Never overwritten by default: these hold settings edited by hand on the machine. An absolute destination is honoured as-is, which is how the shared parc file reaches /etc/morfsystem.",
+  "configs": [
+    {
+      "source": "config/morfnotify.json",
+      "dest": "morfnotify.json"
+    }
+  ],
+  "status_url": "http://127.0.0.1:8789/status"
+}
