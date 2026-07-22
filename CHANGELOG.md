@@ -5,6 +5,19 @@ et du [versionnage sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.2.1] – 2026-07-22
+### Modifié
+
+- **Installation, mise à jour et désinstallation par `./service.py`** — point
+  d'entrée unique multiplateforme (morfdeploy), en remplacement des scripts
+  `install-service.sh`/`.ps1`. Le binaire de ce service est inchangé ; seul son
+  mode de déploiement évolue.
+- **La configuration vit désormais dans `/etc/morfnotify`** (convention Linux),
+  séparée du binaire dans `/opt/morfnotify`. Le déplacement est déclaré : la config
+  existante est adoptée, jamais écrasée.
+- **Enrichissement à la mise à jour** : une clé introduite par une nouvelle
+  version est ajoutée avec sa valeur par défaut, sans jamais toucher vos réglages.
+
 ## [0.2.0] – 2026-07-21
 
 ### Modifié
