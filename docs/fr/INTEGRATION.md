@@ -127,7 +127,7 @@ La destination fournie `email` se configure comme une destination normale :
 }
 ```
 
-Les producteurs, dont RaspberryDashboard, n'ont pas à connaître SMTP : ils
+Les producteurs, dont morfDashboard, n'ont pas à connaître SMTP : ils
 continuent simplement à viser `"email"` dans `targets`.
 
 ## Destination Telegram
@@ -146,7 +146,7 @@ La destination fournie `telegram` utilise l'API Telegram Bot `sendMessage` :
 Un producteur choisit le canal au moment de l'appel :
 
 ```json
-{ "title": "RaspberryDashboard", "message": "morfSensor defaillant", "level": "error", "targets": ["telegram"] }
+{ "title": "morfDashboard", "message": "morfSensor defaillant", "level": "error", "targets": ["telegram"] }
 ```
 
 Pour envoyer sur plusieurs canaux, viser plusieurs destinations :
