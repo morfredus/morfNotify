@@ -5,6 +5,17 @@ et du [versionnage sémantique](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.2.2] – 2026-07-26
+### Ajouté
+
+- **Déclaration de l'API dans `/status`.** Le service annonce désormais ses
+  routes métier (`POST /notify`, `GET /targets`) via le point unique
+  `fillAnnouncedDetail` + `morfbeacon::describeService` — la même source que
+  morfAnalytics et morfMonitor. Étant sans interface web, il n'émet que le bloc
+  `api`, jamais de `web_ui`. Un superviseur du parc peut ainsi cartographier son
+  API sans la connaître à l'avance. Le heartbeat reste inchangé (il annonce des
+  capacités, pas l'API).
+
 ## [0.2.1] – 2026-07-22
 ### Modifié
 

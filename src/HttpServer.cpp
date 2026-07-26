@@ -7,6 +7,7 @@
 #include "morfnotify/HttpServer.h"
 #include "morfnotify/ModuleRegistry.h"
 #include "morfnotify/Notification.h"
+#include "morfnotify/SelfDescription.h"
 #include "morfnotify/Version.h"
 
 #include <QTcpServer>
@@ -181,6 +182,17 @@ QByteArray HttpServer::buildStatusJson() const {
     o["uptime_s"] = static_cast<double>(m_uptime.isValid() ? m_uptime.elapsed() / 1000 : 0);
     o["ts"]       = static_cast<double>(QDateTime::currentSecsSinceEpoch());
     o["metrics"]  = m_registry ? m_registry->metrics() : QJsonObject{};
+
+    // Detail annonce (API) depuis le point UNIQUE. morfNotify sert lui-meme son
+    // /status : il appelle donc fillAnnouncedDetail + describeService, la meme
+    // source que les autres services, pour ne pas diverger. Sans interface web,
+    // describeService n'emet que le bloc `api`.
+    morfbeacon::PresenceConfig self;
+    fillAnnouncedDetail(self);
+    const QJsonObject detail = morfbeacon::describeService(self, port());
+    for (auto it = detail.constBegin(); it != detail.constEnd(); ++it)
+        o[it.key()] = it.value();
+
     return toJson(o);
 }
 
