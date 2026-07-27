@@ -1,4 +1,4 @@
-# Protocole HTTP — morfNotify
+# Protocole HTTP - morfNotify
 
 Retour à l'[index de la documentation](README.md).
 
@@ -32,16 +32,16 @@ Corps (JSON) :
 
 Réponses :
 
-- **`202 Accepted`** — notification acceptée et **remise en arrière-plan** :
+- **`202 Accepted`** - notification acceptée et **remise en arrière-plan** :
   ```json
   { "accepted": true, "queued": ["pixel","dashboard"], "unknown": [], "ts": 1784229145 }
   ```
   `queued` = destinations retenues et déclenchées ; `unknown` = noms demandés mais
   non configurés (signalés, **pas** une erreur). La livraison réelle est
   fire-and-forget : un `202` ne garantit pas la remise finale (voir les logs).
-- **`400 Bad Request`** — JSON invalide, ou `message`/`targets` manquant :
+- **`400 Bad Request`** - JSON invalide, ou `message`/`targets` manquant :
   `{ "error": "champ 'message' requis et non vide" }`.
-- **`405 Method Not Allowed`** — autre méthode que `POST` sur `/notify`.
+- **`405 Method Not Allowed`** - autre méthode que `POST` sur `/notify`.
 
 ## `GET /targets`
 

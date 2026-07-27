@@ -1,4 +1,4 @@
-# Intégration — morfNotify
+# Intégration - morfNotify
 
 Retour à l'[index de la documentation](README.md).
 
@@ -105,7 +105,7 @@ CMake.
 ```
 
 Rien d'autre à toucher : les producteurs peuvent aussitôt viser `"console"` dans
-leurs `targets`. **L'API n'a pas changé** — c'est tout l'intérêt du point de
+leurs `targets`. **L'API n'a pas changé** - c'est tout l'intérêt du point de
 diffusion unique.
 
 ## Destination e-mail SMTP
@@ -122,7 +122,7 @@ La destination fournie `email` se configure comme une destination normale :
   "username": "user@example.com",
   "password": "app-password",
   "from": "morfSystem <morf@example.com>",
-  "to": ["toi@example.com"],
+  "to": ["destinataire@example.com"],
   "subject_prefix": "morfSystem"
 }
 ```

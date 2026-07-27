@@ -1,4 +1,4 @@
-# Roadmap — morfNotify
+# Roadmap - morfNotify
 
 Pistes envisagées, sans engagement de date. morfNotify doit rester **petit,
 stable et sans logique métier** : chaque ajout se pèse à cette aune. L'API
@@ -9,11 +9,11 @@ destinations.
 
 Le point d'extension `INotifier` + `ModuleFactory` est prêt pour :
 
-- **E-mail** — envoi SMTP (`type: "smtp"`).
-- **MQTT** — publication sur un broker domotique (`type: "mqtt"`).
-- **Écrans dédiés** — cuisine, salon, atelier (webhook aujourd'hui ; driver
+- **E-mail** - envoi SMTP (`type: "smtp"`).
+- **MQTT** - publication sur un broker domotique (`type: "mqtt"`).
+- **Écrans dédiés** - cuisine, salon, atelier (webhook aujourd'hui ; driver
   dédié si besoin).
-- **Slack / Discord / Telegram** — webhooks entrants (déjà possibles via `webhook`
+- **Slack / Discord / Telegram** - webhooks entrants (déjà possibles via `webhook`
   ; un format dédié pourrait simplifier).
 
 Chaque ajout : une classe `INotifier`, une branche dans `ModuleFactory::create`,

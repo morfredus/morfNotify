@@ -13,7 +13,7 @@
 morfNotify **ne détecte rien, ne décide de rien, ne connaît aucun projet**. Sa
 seule responsabilité : recevoir un message et le distribuer vers les destinations
 demandées. C'est le **point unique de diffusion** des notifications de
-l'écosystème — n'importe quel projet (actuel ou futur) peut informer l'utilisateur
+l'écosystème - n'importe quel projet (actuel ou futur) peut informer l'utilisateur
 avec une intégration minimale, sans connaître les mécanismes d'envoi.
 
 ## Philosophie
@@ -46,7 +46,7 @@ curl -X POST http://localhost:8789/notify \
 | `GET /status` | compatible morfBeacon (app, version, uptime, metrics) |
 | `GET /healthz` | `{ "status": "ok" }` |
 
-Réponse `202` : `{ "accepted": true, "queued": [...], "unknown": [...] }` — les noms
+Réponse `202` : `{ "accepted": true, "queued": [...], "unknown": [...] }` - les noms
 de destinations inconnus sont signalés, jamais bloquants. La livraison est
 **fire-and-forget** : le producteur n'attend jamais une destination lente.
 
@@ -54,12 +54,12 @@ de destinations inconnus sont signalés, jamais bloquants. La livraison est
 
 Indépendantes les unes des autres, ajoutées sans toucher à l'API. Fournies :
 
-- **`log`** — journal (journald) + fichier optionnel.
-- **`webhook`** — POST HTTP vers une URL. `format: "json"` (notification complète)
-  ou `format: "ntfy"` (push ntfy.sh — ex. un téléphone/Pixel).
-- **`email`** — envoi SMTP (`starttls`, `ssl` ou `none`) vers un ou plusieurs
+- **`log`** - journal (journald) + fichier optionnel.
+- **`webhook`** - POST HTTP vers une URL. `format: "json"` (notification complète)
+  ou `format: "ntfy"` (push ntfy.sh - ex. un téléphone/Pixel).
+- **`email`** - envoi SMTP (`starttls`, `ssl` ou `none`) vers un ou plusieurs
   destinataires.
-- **`telegram`** — notification Telegram via Bot API (`bot_token` + `chat_id`).
+- **`telegram`** - notification Telegram via Bot API (`bot_token` + `chat_id`).
 
 Ajouter une destination (e-mail, MQTT, écran dédié…) = une sous-classe `INotifier`
 + une ligne dans la fabrique. Les producteurs continuent d'utiliser exactement la
@@ -98,8 +98,8 @@ sudo ./service.py uninstall    # desinscrit, en conservant votre configuration
 ./service.py status            # ce que le systeme en dit
 ```
 
-Un seul point d'entree partout. Ce qu'est ce service — son nom, son dossier,
-ses configurations — est declare dans `service.json` a cote. Les quatre etapes
+Un seul point d'entree partout. Ce qu'est ce service - son nom, son dossier,
+ses configurations - est declare dans `service.json` a cote. Les quatre etapes
 d'installation vivent une seule fois pour tout le parc ; seul le gestionnaire
 de services change selon la plateforme.
 
@@ -108,11 +108,11 @@ toujours, inchanges.
 
 ## Documentation
 
-- [Architecture](docs/fr/ARCHITECTURE.md) — les classes et le fil d'exécution.
-- [Protocole HTTP](docs/fr/PROTOCOL.md) — routes et schéma JSON.
-- [Intégration](docs/fr/INTEGRATION.md) — **ajouter une destination** ; brancher
+- [Architecture](docs/fr/ARCHITECTURE.md) - les classes et le fil d'exécution.
+- [Protocole HTTP](docs/fr/PROTOCOL.md) - routes et schéma JSON.
+- [Intégration](docs/fr/INTEGRATION.md) - **ajouter une destination** ; brancher
   un producteur.
 
 ## Licence
 
-GPL-3.0-only — © 2026 morfredus (Frédéric Biron).
+GPL-3.0-only - © 2026 morfredus (Frédéric Biron).

@@ -1,4 +1,4 @@
-# Architecture — morfNotify
+# Architecture - morfNotify
 
 Retour à l'[index de la documentation](README.md).
 

@@ -12,7 +12,7 @@
 
 morfNotify **detects nothing, decides nothing, knows no project**. Its only job:
 receive a message and deliver it to the requested destinations. It is the single
-fan-out point for the ecosystem's notifications — any project (present or future)
+fan-out point for the ecosystem's notifications - any project (present or future)
 can inform the user with a minimal integration, without knowing how delivery works.
 
 ## Philosophy
@@ -44,7 +44,7 @@ curl -X POST http://localhost:8789/notify \
 | `GET /status` | morfBeacon-compatible (app, version, uptime, metrics) |
 | `GET /healthz` | `{ "status": "ok" }` |
 
-`202` response: `{ "accepted": true, "queued": [...], "unknown": [...] }` — unknown
+`202` response: `{ "accepted": true, "queued": [...], "unknown": [...] }` - unknown
 target names are reported, never fatal. Delivery is **fire-and-forget**: producers
 never wait on a slow destination.
 
@@ -52,9 +52,9 @@ never wait on a slow destination.
 
 Independent of each other, added without changing the API. Built in:
 
-- **`log`** — journal (journald) + optional file.
-- **`webhook`** — HTTP POST to a URL. `format: "json"` (full notification) or
-  `format: "ntfy"` (ntfy.sh push — e.g. a phone/Pixel).
+- **`log`** - journal (journald) + optional file.
+- **`webhook`** - HTTP POST to a URL. `format: "json"` (full notification) or
+  `format: "ntfy"` (ntfy.sh push - e.g. a phone/Pixel).
 
 Adding a destination (e-mail, MQTT, a dedicated screen…) = one `INotifier`
 subclass + one line in the factory. Producers keep using the exact same API.
@@ -92,8 +92,8 @@ sudo ./service.py uninstall    # deregister, keeping your configuration
 ./service.py status            # what the system says about it
 ```
 
-One entry point everywhere. What this service is — its name, its directory,
-its configurations — is declared in `service.json` beside it. The four install
+One entry point everywhere. What this service is - its name, its directory,
+its configurations - is declared in `service.json` beside it. The four install
 steps live once for the whole parc; only the service manager differs by
 platform.
 
@@ -107,4 +107,4 @@ protocol, **adding a destination**, integrating a producer.
 
 ## License
 
-GPL-3.0-only — © 2026 morfredus (Frédéric Biron).
+GPL-3.0-only - © 2026 morfredus (Frédéric Biron).
