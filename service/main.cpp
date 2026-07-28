@@ -35,7 +35,8 @@ QString findDefaultConfig() {
         QDir(exeDir).filePath("morfnotify.json"),
         QDir(exeDir).filePath("config/morfnotify.json"),
 #ifdef Q_OS_UNIX
-        QStringLiteral("/etc/morfnotify/morfnotify.json"),
+        QStringLiteral("/etc/morfsystem/morfnotify/morfnotify.json"),
+        QStringLiteral("/etc/morfnotify/morfnotify.json"),   // ancien emplacement (avant le regroupement sous /etc/morfsystem)
 #endif
     };
     for (const QString& c : candidates)

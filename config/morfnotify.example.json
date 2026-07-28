@@ -1,5 +1,5 @@
 {
-  "_comment": "Configuration morfNotify. Copier en 'morfnotify.json' et adapter. Le service lit ce fichier via --config, ou le cherche dans le dossier courant, a cote du binaire, ou dans /etc/morfnotify/.",
+  "_comment": "Configuration morfNotify. Copier en 'morfnotify.json' et adapter. Le service lit ce fichier via --config, ou le cherche dans le dossier courant, a cote du binaire, ou dans /etc/morfsystem/morfnotify/.",
 
   "app_name": "morfNotify",
   "http_port": 8789,
