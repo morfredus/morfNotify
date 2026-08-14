@@ -3,6 +3,22 @@
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 et du [versionnage sémantique](https://semver.org/lang/fr/).
 
+## [0.3.3] - 2026-08-14
+
+### Corrigé
+
+- Description de l'unité systemd : remplacement du tiret cadratin par un tiret
+  simple, conformément à la règle de ponctuation du parc.
+
+## [0.3.2] - 2026-08-14
+
+### Modifié
+
+- Resynchronisation de la copie vendorée de **morfBeacon**
+  (`third_party/morf/beacon`) en 0.6.0, alignée sur le dépôt source
+  (`IMetricsProvider.h`, `StatusServer.cpp`). Aucun changement de comportement ;
+  la copie statique reste en phase avec le parc.
+
 ## [0.3.1] - 2026-07-28
 
 ### Modifié

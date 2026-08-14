@@ -6,7 +6,7 @@
 # __RUN_USER__ et __APP_DIR__.
 
 [Unit]
-Description=morfNotify — point de diffusion des notifications de l'ecosysteme
+Description=morfNotify - point de diffusion des notifications de l'ecosysteme
 After=local-fs.target network-online.target
 Wants=network-online.target
 
