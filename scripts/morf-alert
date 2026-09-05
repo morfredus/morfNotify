@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+"""morf-alert : pont systemd -> morfNotify.
+
+Declenche par `OnFailure=morf-alert@%n.service` sur chaque service morfSystem :
+quand systemd constate qu'un service est en echec (crash, sortie non-zero, echec
+de demarrage, kill par watchdog...), il lance `morf-alert@<unite>.service`, qui
+appelle ce script avec le nom de l'unite tombee. Le script en lit l'etat et un
+extrait de journal, puis POST une notification a morfNotify, qui la distribue
+(Telegram, e-mail...).
+
+C'est le chemin « panne franche » (le processus est mort), complementaire du
+chemin « panne fonctionnelle » de morfMonitor (le processus tourne mais son API
+ne repond plus). morfDashboard n'est plus un maillon indispensable de l'alerte.
+
+Best-effort par principe : ne bloque jamais, n'echoue jamais bruyamment (une
+alerte ratee ne doit pas empirer une panne). Stdlib seulement, aucune dependance.
+"""
+
+import json
+import os
+import socket
+import subprocess
+import sys
+import urllib.request
+
+# morfNotify ecoute en local ; le port du parc est 8789. Surchargeable par
+# l'environnement pour un cas particulier (autre hote, autre port).
+NOTIFY_URL = os.environ.get("MORFNOTIFY_URL", "http://127.0.0.1:8789/notify")
+
+# Destinations : d'abord l'environnement, puis un fichier admin partage, puis un
+# repli raisonnable. Un fichier plutot qu'une valeur en dur laisse regler les
+# canaux sans retoucher le script.
+TARGETS_FILE = "/etc/morfsystem/alert-targets"
+DEFAULT_TARGETS = ["telegram"]
+HTTP_TIMEOUT = 6
+
+
+def targets():
+    env = os.environ.get("MORF_ALERT_TARGETS", "").strip()
+    if env:
+        return [t.strip() for t in env.split(",") if t.strip()]
+    try:
+        with open(TARGETS_FILE, encoding="utf-8") as f:
+            names = [t.strip() for t in f.read().replace("\n", ",").split(",") if t.strip()]
+        if names:
+            return names
+    except OSError:
+        pass
+    return DEFAULT_TARGETS
+
+
+def _run(args):
+    """Sortie d'une commande, ou chaine vide en cas de souci (best-effort)."""
+    try:
+        return subprocess.run(args, capture_output=True, text=True, timeout=5).stdout.strip()
+    except Exception:
+        return ""
+
+
+def build_message(unit):
+    props = _run(["systemctl", "show", unit,
+                  "-p", "Result", "-p", "SubState", "-p", "ActiveState",
+                  "-p", "ExecMainStatus", "-p", "ExecMainCode", "-p", "NRestarts"])
+    kv = dict(line.split("=", 1) for line in props.splitlines() if "=" in line)
+    host = socket.gethostname()
+
+    lines = [
+        f"{unit} en echec sur {host}",
+        (f"resultat={kv.get('Result', '?')} etat={kv.get('SubState', '?')} "
+         f"exit={kv.get('ExecMainStatus', '?')}/{kv.get('ExecMainCode', '?')} "
+         f"redemarrages={kv.get('NRestarts', '?')}"),
+    ]
+    tail = _run(["journalctl", "-u", unit, "-n", "8", "--no-pager", "-o", "cat"])
+    if tail:
+        lines.append("--- journal ---")
+        lines.append(tail)
+    return "\n".join(lines)
+
+
+def main():
+    unit = sys.argv[1] if len(sys.argv) > 1 else "?"
+    payload = {
+        "title": "morfSystem",
+        "message": build_message(unit),
+        "level": "error",
+        "targets": targets(),
+    }
+    body = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        NOTIFY_URL, data=body,
+        headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as resp:
+            print(f"[morf-alert] {unit}: morfNotify HTTP {resp.status}")
+    except Exception as exc:
+        print(f"[morf-alert] {unit}: envoi a morfNotify impossible: {exc}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as exc:  # jamais d'echec bruyant : c'est un pont d'alerte
+        print(f"[morf-alert] erreur inattendue: {exc}", file=sys.stderr)
+    sys.exit(0)

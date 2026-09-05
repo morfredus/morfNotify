@@ -1,0 +1,17 @@
+# Pont d'alerte systemd -> morfNotify, fourni et installe par morfNotify.
+#
+# Chaque service morfSystem declare, dans SON unite, une ligne :
+#     OnFailure=morf-alert@%n.service
+# Quand systemd constate l'echec du service, il instancie cette unite avec le nom
+# de l'unite tombee (%i) et appelle le script morf-alert, qui previent morfNotify.
+#
+# Volontairement SANS OnFailure ici (jamais de boucle d'alertes) et SANS section
+# [Install] : l'unite est instanciee a la demande par OnFailure, jamais activee.
+[Unit]
+Description=Alerte morfNotify pour %i
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/morfsystem/morfnotify/morf-alert %i
+Nice=10
+TimeoutStartSec=20

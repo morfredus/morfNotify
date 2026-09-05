@@ -3,6 +3,24 @@
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 et du [versionnage sémantique](https://semver.org/lang/fr/).
 
+## [0.5.0] - 2026-09-06
+
+### Added
+
+- **systemd -> morfNotify alert bridge**, so a hard failure (a service process that
+  dies) raises a Telegram alert instantly and event-driven, without depending on any
+  poller. morfNotify ships and installs a generic template unit `morf-alert@.service`
+  and the `morf-alert` script (to `/usr/lib/morfsystem/morfnotify/`), placed on
+  `install`/`update` (Linux, root; best-effort - never breaks the install). A service
+  opts in with one line in its own unit: `OnFailure=morf-alert@%n.service`. On failure,
+  systemd runs the bridge, which reads the unit's state (`Result`, `SubState`,
+  `ExecMainStatus`, `NRestarts`) and a short journal tail and POSTs an `error`-level
+  notification to `POST /notify`. This is the "hard failure" path (process dead),
+  complementary to morfMonitor's "functional failure" path (process up, API
+  unresponsive); morfDashboard is no longer a required link in the alert chain.
+  Targets default to `telegram`, overridable via `/etc/morfsystem/alert-targets` or
+  the `MORF_ALERT_TARGETS` env var; the morfNotify URL via `MORFNOTIFY_URL`.
+
 ## [0.4.3] - 2026-09-03
 
 ### Changed
