@@ -3,6 +3,16 @@
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 et du [versionnage sémantique](https://semver.org/lang/fr/).
 
+## [0.5.2] - 2026-09-14
+
+### Changed
+
+- Re-vendored morfDeploy to 0.20.6. The VERSION is bumped so the source tag
+  matches the rebuilt artifact: two commits (the morfDeploy re-vendor and an
+  exec-bit restore) had landed on 0.5.1 after its tag, so the built .deb no longer
+  matched `v0.5.1` and the release provenance check refused to publish it. No
+  runtime behaviour change.
+
 ## [0.5.1] - 2026-09-07
 
 ### Changed
