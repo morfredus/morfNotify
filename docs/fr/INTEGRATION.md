@@ -45,6 +45,22 @@ comment on l'atteint.
 > Bonne pratique : le producteur ne doit jamais **bloquer** ni **échouer** à cause
 > d'une notification. En cas d'erreur (service absent, timeout), on ignore.
 
+### Depuis un équipement embarqué (ESP32)
+
+Un ESP32 ne connaît ni l'adresse de morfNotify ni la liste des destinations du
+parc. Les deux se résolvent sans configuration :
+
+1. **Trouver morfNotify** : écouter les heartbeats morfBeacon (UDP 45454) et
+   retenir celui qui annonce la capacité `notification`. Prendre l'**IP source**
+   du datagramme (le champ `host` est un nom que l'ESP32 ne sait pas forcément
+   résoudre) et `status_port`.
+2. **Envoyer sans `targets`** : `POST http://IP:status_port/notify` avec
+   `title`, `message`, `level`. morfNotify applique ses destinations par défaut.
+
+Exemple de référence : l'alerte « accu de la sonde à changer » de MeteoHub
+(`src/modules/battery_alert.cpp`), qui n'envoie que juste après une trame reçue
+pour ne jamais gêner la radio, et retente à la trame suivante en cas d'échec.
+
 ## B. Ajouter une destination
 
 Le point d'extension est `INotifier`. Exemple : une destination fictive `demo`.

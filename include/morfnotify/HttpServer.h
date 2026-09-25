@@ -47,6 +47,7 @@ private:
                        const QByteArray& path, const QByteArray& body);
     QByteArray handleNotify(const QByteArray& body, int& code, QByteArray& reason) const;
     QByteArray buildStatusJson() const;
+    QStringList defaultTargets() const; // destinations d'une notification sans 'targets'
     void reply(QTcpSocket* sock, int code, const QByteArray& reason, const QByteArray& body);
 
     ServiceConfig      m_config;

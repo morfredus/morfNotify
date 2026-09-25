@@ -2,7 +2,7 @@
 
 *Read in another language: **English** (this document) · [Français](README.fr.md).*
 
-[![Version](https://img.shields.io/badge/version-0.5.2-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.6.0-blue)](CHANGELOG.md)
 ![C++](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus)
 ![Qt](https://img.shields.io/badge/Qt-6-41CD52?logo=qt)
 ![Build](https://img.shields.io/badge/CMake-3.21+-064F8C?logo=cmake)
@@ -47,6 +47,12 @@ curl -X POST http://localhost:8789/notify \
 `202` response: `{ "accepted": true, "queued": [...], "unknown": [...] }` - unknown
 target names are reported, never fatal. Delivery is **fire-and-forget**: producers
 never wait on a slow destination.
+
+`targets` may be omitted: morfNotify then applies its default destinations
+(`default_targets` from the config, else `/etc/morfsystem/alert-targets`, else
+`telegram`) and answers `"defaulted": true`. This lets a device with no access to
+the fleet config (MeteoHub, an ESP32) send notifications. To be found without an
+address, morfNotify announces the **`notification`** morfBeacon capability.
 
 ## Destinations (pluggable)
 

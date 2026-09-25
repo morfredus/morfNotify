@@ -26,9 +26,16 @@ Corps (JSON) :
 | Champ | Obligatoire | Sens |
 |---|---|---|
 | `message` | **oui** (non vide) | corps du message |
-| `targets` | **oui** (≥ 1) | noms des destinations (tableau, ou une seule chaîne) |
+| `targets` | non (défaut : voir ci-dessous) | noms des destinations (tableau, ou une seule chaîne) |
 | `title` | non | titre court |
 | `level` | non (défaut `info`) | `info` \| `success` \| `warning` \| `error` (libre) |
+
+**Destinations par défaut.** Sans `targets` (ou avec un tableau vide), morfNotify
+route lui-même, dans l'ordre : `default_targets` de sa config, puis la liste
+partagée du parc `/etc/morfsystem/alert-targets` (virgules ou lignes, relue à
+chaque appel), puis `telegram`. La réponse porte alors `"defaulted": true`. Un
+producteur qui ne peut pas lire la config du parc (un ESP32 comme MeteoHub) laisse
+ainsi morfNotify choisir. Ajout rétrocompatible : `morfnotify/1` inchangé.
 
 Réponses :
 
@@ -39,7 +46,7 @@ Réponses :
   `queued` = destinations retenues et déclenchées ; `unknown` = noms demandés mais
   non configurés (signalés, **pas** une erreur). La livraison réelle est
   fire-and-forget : un `202` ne garantit pas la remise finale (voir les logs).
-- **`400 Bad Request`** - JSON invalide, ou `message`/`targets` manquant :
+- **`400 Bad Request`** - JSON invalide, ou `message` manquant :
   `{ "error": "champ 'message' requis et non vide" }`.
 - **`405 Method Not Allowed`** - autre méthode que `POST` sur `/notify`.
 
@@ -72,5 +79,7 @@ Sonde de vie : `{ "status": "ok" }`.
 ## Annonce réseau (morfBeacon)
 
 En parallèle de l'API, morfNotify diffuse un heartbeat UDP `morfbeacon/1` sur le
-port du parc (45454 par défaut), avec `app: "morfNotify"` et `status_port` égal au
-port HTTP réel. Un superviseur le découvre ainsi sans configuration.
+port du parc (45454 par défaut), avec `app: "morfNotify"`, `status_port` égal au
+port HTTP réel et la capacité **`notification`**. Un superviseur le découvre ainsi
+sans configuration, et un producteur le trouve par cette capacité, jamais par son
+nom (MeteoHub s'en sert pour l'alerte « accu de la sonde à changer »).

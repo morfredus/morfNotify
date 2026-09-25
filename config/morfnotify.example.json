@@ -5,6 +5,9 @@
   "http_port": 8789,
   "bind_address": "0.0.0.0",
 
+  "_default_targets": "Destinations d'une notification qui n'en nomme aucune (ex. MeteoHub). Absent ou vide : /etc/morfsystem/alert-targets, sinon telegram.",
+  "default_targets": [],
+
   "beacon": {
     "_comment": "Annonce de presence sur le LAN (protocole morfBeacon, port du parc).",
     "enabled": true,

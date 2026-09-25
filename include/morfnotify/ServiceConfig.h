@@ -48,6 +48,12 @@ struct ServiceConfig {
     // Destinations a activer.
     QVector<ModuleDef> targets;
 
+    // Destinations par defaut d'une notification qui n'en nomme aucune (cle
+    // "default_targets"). Vide => repli sur /etc/morfsystem/alert-targets (la
+    // liste partagee du parc, deja lue par morfMonitor et morf-alert), puis sur
+    // "telegram", le meme repli que le reste du parc.
+    QStringList defaultTargets;
+
     static ServiceConfig fromJson(const QJsonObject& root) {
         ServiceConfig c;
         if (root.contains("app_name"))     c.appName     = root.value("app_name").toString(c.appName);
@@ -59,6 +65,12 @@ struct ServiceConfig {
         if (beacon.contains("enabled"))     c.beaconEnabled    = beacon.value("enabled").toBool(c.beaconEnabled);
         if (beacon.contains("udp_port"))    c.beaconUdpPort    = static_cast<quint16>(beacon.value("udp_port").toInt(c.beaconUdpPort));
         if (beacon.contains("interval_ms")) c.beaconIntervalMs = beacon.value("interval_ms").toInt(c.beaconIntervalMs);
+
+        for (const QJsonValue& v : root.value("default_targets").toArray()) {
+            const QString t = v.toString().trimmed();
+            if (!t.isEmpty())
+                c.defaultTargets << t;
+        }
 
         const QJsonArray targets = root.value("targets").toArray();
         for (const QJsonValue& v : targets) {

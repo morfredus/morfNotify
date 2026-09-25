@@ -19,6 +19,8 @@
 #include <QJsonDocument>
 #include <QJsonParseError>
 #include <QDateTime>
+#include <QFile>
+#include <QRegularExpression>
 
 #include <utility>
 
@@ -142,6 +144,27 @@ void HttpServer::handleRequest(QTcpSocket* sock, const QByteArray& method,
     reply(sock, code, reason, out);
 }
 
+// Destinations par defaut, dans l'ordre : "default_targets" de la config, puis la
+// liste partagee du parc (/etc/morfsystem/alert-targets, virgules ou lignes), puis
+// "telegram". Le fichier est relu a chaque appel : une notification sans cible est
+// rare, et l'administrateur peut ainsi changer le routage sans redemarrer.
+QStringList HttpServer::defaultTargets() const {
+    if (!m_config.defaultTargets.isEmpty())
+        return m_config.defaultTargets;
+    QFile f(QStringLiteral("/etc/morfsystem/alert-targets"));
+    if (f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QStringList t;
+        const QString body = QString::fromUtf8(f.readAll());
+        for (const QString& s : body.split(QRegularExpression(QStringLiteral("[,\n]")),
+                                           Qt::SkipEmptyParts))
+            if (!s.trimmed().isEmpty())
+                t << s.trimmed();
+        if (!t.isEmpty())
+            return t;
+    }
+    return {QStringLiteral("telegram")};
+}
+
 QByteArray HttpServer::handleNotify(const QByteArray& body, int& code, QByteArray& reason) const {
     QJsonParseError pe{};
     const QJsonDocument doc = QJsonDocument::fromJson(body, &pe);
@@ -152,7 +175,8 @@ QByteArray HttpServer::handleNotify(const QByteArray& body, int& code, QByteArra
 
     Notification n;
     QString err;
-    if (!Notification::fromJson(doc.object(), &n, &err)) {
+    const bool defaulted = !doc.object().contains(QStringLiteral("targets"));
+    if (!Notification::fromJson(doc.object(), &n, &err, defaultTargets())) {
         code = 400; reason = "Bad Request";
         return toJson(QJsonObject{{"error", err}});
     }
@@ -168,6 +192,8 @@ QByteArray HttpServer::handleNotify(const QByteArray& body, int& code, QByteArra
     o["accepted"] = true;
     o["queued"]   = QJsonArray::fromStringList(queued);
     o["unknown"]  = QJsonArray::fromStringList(unknown);
+    if (defaulted)
+        o["defaulted"] = true;   // routage decide ici, pas par le producteur
     o["ts"]       = static_cast<double>(n.ts);
     return toJson(o);
 }

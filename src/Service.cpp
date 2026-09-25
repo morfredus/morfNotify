@@ -59,6 +59,9 @@ bool Service::start() {
         pc.appName             = m_config.appName;
         pc.version             = morfnotify::version();
         pc.instanceId          = m_config.instanceId;
+        // Capacite annoncee : c'est par elle qu'un producteur sans configuration
+        // (MeteoHub, un ESP32) trouve morfNotify sur le LAN, jamais par son nom.
+        pc.capabilities        = {QStringLiteral("notification")};
         pc.udpPort             = m_config.beaconUdpPort;
         pc.broadcastIntervalMs = m_config.beaconIntervalMs;
         pc.statusPort          = m_http ? m_http->port() : 0;

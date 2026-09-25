@@ -43,7 +43,12 @@ struct Notification {
 
     // Construit une Notification depuis un objet JSON (corps de POST /notify).
     // Renvoie false + renseigne `error` si la forme est invalide.
-    static bool fromJson(const QJsonObject& o, Notification* out, QString* error) {
+    // `defaultTargets` : destinations retenues quand le producteur n'en nomme
+    // aucune. Un equipement embarque (ESP32) ne peut pas lire la liste du parc
+    // (/etc/morfsystem/alert-targets) : il laisse morfNotify router. Liste vide =>
+    // 'targets' reste obligatoire (comportement historique).
+    static bool fromJson(const QJsonObject& o, Notification* out, QString* error,
+                         const QStringList& defaultTargets = {}) {
         Notification n;
         n.title   = o.value(QStringLiteral("title")).toString();
         n.message = o.value(QStringLiteral("message")).toString();
@@ -71,6 +76,8 @@ struct Notification {
                 n.targets << name;
         }
 
+        if (n.targets.isEmpty())
+            n.targets = defaultTargets;
         if (n.targets.isEmpty()) {
             if (error) *error = QStringLiteral("champ 'targets' requis (au moins une destination)");
             return false;

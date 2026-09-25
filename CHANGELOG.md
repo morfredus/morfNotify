@@ -3,6 +3,21 @@
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 et du [versionnage sémantique](https://semver.org/lang/fr/).
 
+## [0.6.0] - 2026-09-25
+
+### Added
+
+- **Default targets.** `targets` is now optional in `POST /notify`. Without it,
+  morfNotify routes the notification itself: `default_targets` from its config,
+  else the shared fleet list `/etc/morfsystem/alert-targets` (re-read on each
+  call), else `telegram`, the same fallback as morfMonitor and `morf-alert`. The
+  `202` response then carries `"defaulted": true`. This lets a device that cannot
+  read the fleet config (an ESP32 such as MeteoHub) send notifications. Backward
+  compatible: `morfnotify/1` unchanged, explicit targets behave as before.
+- **`notification` capability announced in the morfBeacon heartbeat**, as listed
+  in the morfBeacon protocol registry, so producers find morfNotify by capability,
+  never by name. First consumer: MeteoHub's "probe battery to replace" alert.
+
 ## [0.5.2] - 2026-09-14
 
 ### Changed
