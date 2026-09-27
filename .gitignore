@@ -144,3 +144,5 @@ Desktop.ini
 .Spotlight-V100
 .Trashes
 
+# Secrets locaux : jamais versionnes
+secrets.json

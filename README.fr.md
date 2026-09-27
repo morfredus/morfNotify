@@ -2,7 +2,7 @@
 
 *Lire dans une autre langue : [English](README.md) · **Français** (ce document).*
 
-[![Version](https://img.shields.io/badge/version-0.6.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.6.3-blue)](CHANGELOG.md)
 ![C++](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus)
 ![Qt](https://img.shields.io/badge/Qt-6-41CD52?logo=qt)
 ![Build](https://img.shields.io/badge/CMake-3.21+-064F8C?logo=cmake)
@@ -109,8 +109,28 @@ ses configurations - est declare dans `service.json` a cote. Les quatre etapes
 d'installation vivent une seule fois pour tout le parc ; seul le gestionnaire
 de services change selon la plateforme.
 
-Les anciens scripts `scripts/linux/` et `scripts/windows/` fonctionnent
-toujours, inchanges.
+## Pont d'alerte systemd (`morf-alert`)
+
+morfNotify fournit aussi le chemin « panne franche » du parc. Sous Linux,
+`install` et `update` posent une unité modèle `morf-alert@.service` et le script
+`morf-alert` (`/usr/lib/morfsystem/morfnotify/`). Un service s'y abonne par une
+ligne dans sa propre unité :
+
+```ini
+OnFailure=morf-alert@%n.service
+```
+
+Quand systemd constate l'échec de ce service (plantage, sortie non nulle, échec de
+démarrage, arrêt par le watchdog), il lance le pont, qui lit l'état de l'unité
+(`Result`, `SubState`, `ExecMainStatus`, `NRestarts`) et la fin de son journal,
+puis envoie une notification de niveau `error` à `POST /notify`. Il complète
+morfMonitor, qui repère la panne « fonctionnelle » (processus vivant, API muette).
+Le pont fait au mieux et ne bloque jamais.
+
+| Réglage | Défaut |
+|---|---|
+| `MORF_ALERT_TARGETS` (environnement), sinon `/etc/morfsystem/alert-targets` | `telegram` |
+| `MORFNOTIFY_URL` (environnement) | `http://127.0.0.1:8789/notify` |
 
 ## Documentation
 

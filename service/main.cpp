@@ -1,5 +1,5 @@
 /*
- * morfNotify — demon de service
+ * morfNotify - demon de service
  * Copyright (C) 2026 morfredus
  * SPDX-License-Identifier: GPL-3.0-only
  *
@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
 
     QCommandLineParser parser;
     parser.setApplicationDescription(
-        QStringLiteral("morfNotify — point unique de diffusion des notifications "
+        QStringLiteral("morfNotify - point unique de diffusion des notifications "
                        "(API POST /notify, destinations enfichables)."));
     parser.addHelpOption();
     parser.addVersionOption();

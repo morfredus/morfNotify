@@ -3,6 +3,36 @@
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 et du [versionnage sémantique](https://semver.org/lang/fr/).
 
+## [0.6.3] - 2026-09-27
+
+### Changed
+
+- Re-vendored morfBeacon to 0.7.2 (documentation-only release; `include/` and
+  `src/` unchanged).
+
+## [0.6.2] - 2026-09-27
+
+### Changed
+
+- Re-vendored morfDeploy to 0.20.7 (dead-code removal and punctuation only; no
+  behaviour change).
+
+## [0.6.1] - 2026-09-27
+
+### Fixed
+
+- **The systemd alert bridge was documented nowhere but here.** Both READMEs now
+  describe `morf-alert@.service` / `morf-alert`: how a service opts in
+  (`OnFailure=morf-alert@%n.service`), what the bridge reads and sends, and its two
+  settings (`MORF_ALERT_TARGETS` or `/etc/morfsystem/alert-targets`,
+  `MORFNOTIFY_URL`).
+- **The READMEs claimed legacy `scripts/linux/` and `scripts/windows/` install
+  scripts still worked.** None remain (only the unit files); the sentence is gone.
+
+### Changed
+
+- Em dashes replaced by `-` in the project's own files.
+
 ## [0.6.0] - 2026-09-25
 
 ### Added

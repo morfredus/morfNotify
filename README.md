@@ -2,7 +2,7 @@
 
 *Read in another language: **English** (this document) · [Français](README.fr.md).*
 
-[![Version](https://img.shields.io/badge/version-0.6.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.6.3-blue)](CHANGELOG.md)
 ![C++](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus)
 ![Qt](https://img.shields.io/badge/Qt-6-41CD52?logo=qt)
 ![Build](https://img.shields.io/badge/CMake-3.21+-064F8C?logo=cmake)
@@ -103,8 +103,28 @@ its configurations - is declared in `service.json` beside it. The four install
 steps live once for the whole parc; only the service manager differs by
 platform.
 
-The former `scripts/linux/` and `scripts/windows/` scripts still work,
-unchanged.
+## systemd alert bridge (`morf-alert`)
+
+morfNotify also ships the "hard failure" path of the parc. On Linux, `install` and
+`update` place a template unit `morf-alert@.service` and the `morf-alert` script
+(`/usr/lib/morfsystem/morfnotify/`). A service opts in with one line in its own
+unit:
+
+```ini
+OnFailure=morf-alert@%n.service
+```
+
+When systemd sees that service fail (crash, non-zero exit, start failure, watchdog
+kill), it runs the bridge, which reads the unit state (`Result`, `SubState`,
+`ExecMainStatus`, `NRestarts`) and a short journal tail, then posts an `error`
+notification to `POST /notify`. It complements morfMonitor, which catches the
+"functional" failure (process up, API silent). The bridge is best-effort and never
+blocks.
+
+| Setting | Default |
+|---|---|
+| `MORF_ALERT_TARGETS` (env), else `/etc/morfsystem/alert-targets` | `telegram` |
+| `MORFNOTIFY_URL` (env) | `http://127.0.0.1:8789/notify` |
 
 ## Documentation
 
