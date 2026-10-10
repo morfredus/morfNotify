@@ -20,7 +20,7 @@
       "_comment": "Journalise chaque notification (journald + fichier optionnel).",
       "name": "journal",
       "type": "log",
-      "file": "/var/log/morfnotify.log"
+      "file": "/var/log/morfnotify/morfnotify.log"
     },
     {
       "_comment": "Renvoie la notification (JSON complet) vers un endpoint HTTP, ex. un dashboard.",

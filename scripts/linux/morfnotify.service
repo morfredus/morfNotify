@@ -21,5 +21,17 @@ RestartSec=5
 StandardOutput=journal
 StandardError=journal
 
+# Durcissement (etape D de l'hygiene, 2026-10-10) : le systeme de fichiers est en
+# lecture seule pour le service, sauf son dossier de logs. morfNotify n'ecrit rien
+# d'autre : sa config reste sous /etc (lue seulement) et il n'a pas d'etat.
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+# Cree /var/log/morfnotify, possede par User= et inscriptible malgre ProtectSystem :
+# c'est la place du fichier de la destination « log » (avant, /var/log/morfnotify.log,
+# un dossier root que le service ne pouvait pas ecrire).
+LogsDirectory=morfnotify
+
 [Install]
 WantedBy=multi-user.target

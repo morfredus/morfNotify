@@ -3,6 +3,31 @@
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 et du [versionnage sémantique](https://semver.org/lang/fr/).
 
+## [0.6.7] - 2026-10-10
+
+### Changed
+
+- **Hardened systemd unit** (pilot of the parc hardening): `ProtectSystem=strict`,
+  `ProtectHome=yes`, `PrivateTmp=yes`, `NoNewPrivileges=yes`. The filesystem is read-only for
+  the service except `LogsDirectory=morfnotify` (`/var/log/morfnotify`, owned by the service
+  account).
+- **Default `log` destination moved to `/var/log/morfnotify/morfnotify.log`** (example config).
+  The old `/var/log/morfnotify.log` sat in a root-owned directory the service could never write
+  to. An installed config keeps its own value: edit `file` in
+  `/etc/morfsystem/morfnotify/morfnotify.json` and restart.
+
+## [0.6.6] - 2026-10-10
+
+### Changed
+
+- Resync the vendored morfDeploy (0.21.2): `config push` skips identical files.
+
+## [0.6.5] - 2026-10-10
+
+### Changed
+
+- Resync the vendored morfDeploy (0.21.1): `install`/`update` now copy `VERSION` next to the binary.
+
 ## [0.6.4] - 2026-09-29
 
 ### Changed
