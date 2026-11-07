@@ -3,6 +3,23 @@
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 et du [versionnage sémantique](https://semver.org/lang/fr/).
 
+## [0.7.0] - 2026-11-07
+
+### Security
+
+- CSRF guard on `POST /notify`: a request whose `Origin` names another host:port than `Host` is
+  refused with `403 {"error":"cross_origin_forbidden"}`; `Access-Control-Allow-Origin: *` is no
+  longer sent on writes (kept on GET). New `origin-check` ctest.
+- Delivery errors no longer leak secrets into journald: the Telegram bot token (and any
+  `bot<id>:<secret>` pattern) and the webhook URL are masked in `errorString()` before logging.
+
+### Fixed
+
+- Telegram and webhook requests time out after 10 s.
+- SIGTERM and SIGINT stop the event loop cleanly, so `stop()` runs on every systemd stop or update.
+- Everything written to stderr is flushed; the HTTP reply no longer blocks the main thread in
+  `waitForBytesWritten` (asynchronous close with a 10 s safety timer).
+
 ## [0.6.8] - 2026-10-15
 
 ### Changed

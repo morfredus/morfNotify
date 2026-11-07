@@ -28,6 +28,14 @@ QByteArray ntfyTags(const QString& level) {
     if (level == QLatin1String("success")) return "white_check_mark";
     return "information_source";
 }
+
+// L'URL d'un webhook porte souvent son secret (jeton dans le chemin ou la query) et Qt la
+// recopie dans errorString() : la masquer avant toute journalisation.
+QString maskUrl(QString text, const QString& url) {
+    if (!url.isEmpty())
+        text.replace(url, QStringLiteral("<webhook>"));
+    return text;
+}
 } // namespace
 
 WebhookNotifier::WebhookNotifier(const QString& name, const QString& url,
@@ -47,6 +55,7 @@ void WebhookNotifier::send(const Notification& n) {
 void WebhookNotifier::sendJson(const Notification& n) {
     QNetworkRequest req{QUrl(m_url)};
     req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    req.setTransferTimeout(10000);
     const QByteArray body = QJsonDocument(n.toJson()).toJson(QJsonDocument::Compact);
 
     QNetworkReply* reply = m_nam->post(req, body);
@@ -55,7 +64,7 @@ void WebhookNotifier::sendJson(const Notification& n) {
         if (reply->error() == QNetworkReply::NoError)
             emit delivered(target);
         else
-            emit failed(target, reply->errorString());
+            emit failed(target, maskUrl(reply->errorString(), m_url));
         reply->deleteLater();
     });
 }
@@ -64,6 +73,7 @@ void WebhookNotifier::sendNtfy(const Notification& n) {
     // ntfy.sh : corps = message brut, metadonnees en en-tetes.
     QNetworkRequest req{QUrl(m_url)};
     req.setHeader(QNetworkRequest::ContentTypeHeader, "text/plain; charset=utf-8");
+    req.setTransferTimeout(10000);
     if (!n.title.isEmpty())
         req.setRawHeader("Title", n.title.toUtf8());
     req.setRawHeader("Priority", QByteArray::number(ntfyPriority(n.level)));
@@ -75,7 +85,7 @@ void WebhookNotifier::sendNtfy(const Notification& n) {
         if (reply->error() == QNetworkReply::NoError)
             emit delivered(target);
         else
-            emit failed(target, reply->errorString());
+            emit failed(target, maskUrl(reply->errorString(), m_url));
         reply->deleteLater();
     });
 }

@@ -98,3 +98,12 @@ option(MORFNOTIFY_BUILD_EXAMPLES "Compiler l'exemple de demonstration" ${_morfno
 if(MORFNOTIFY_BUILD_EXAMPLES)
     add_subdirectory(examples/minimal)
 endif()
+
+# --- Test du controle d'origine (garde CSRF) : en-tete seul, sans reseau ----
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    enable_testing()
+    add_executable(morfnotify_origin_test test/origin-check-test.cpp)
+    target_include_directories(morfnotify_origin_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_link_libraries(morfnotify_origin_test PRIVATE Qt6::Core)
+    add_test(NAME origin-check COMMAND morfnotify_origin_test)
+endif()

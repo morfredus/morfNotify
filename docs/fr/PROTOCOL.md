@@ -4,7 +4,8 @@ Retour à l'[index de la documentation](README.md).
 
 ---
 
-API HTTP/1.1. Réponses en JSON UTF-8, en-tête `Access-Control-Allow-Origin: *`,
+API HTTP/1.1. Réponses en JSON UTF-8, en-tête `Access-Control-Allow-Origin: *` sur les lectures (jamais sur les écritures ; une écriture
+dont `Origin` diffère de `Host` reçoit `403 cross_origin_forbidden`),
 connexion fermée après chaque réponse. Port par défaut : **8789** (`http_port`).
 Version du protocole : `morfnotify/1` (champ `proto` de `/status`).
 
